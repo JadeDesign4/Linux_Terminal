@@ -1,0 +1,6 @@
+grimblast-git r164.55b1393-1
+localsend-bin 1.17.0-1
+paru 2.1.0-2
+paru-debug 2.1.0-2
+pinta 3.1.2-1
+python-screeninfo 0.8.1-2
