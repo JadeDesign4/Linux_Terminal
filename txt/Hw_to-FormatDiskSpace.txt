@@ -1,0 +1,43 @@
+Yes, that is completely normal. The lsblk command only lists existing, defined partitions. It does not show raw, unallocated space.
+Looking at your lsblk output, your 1TB drive (sda) has a total size of 931.5 GB. If you add up your current partitions (sda1 through sda5), they only equal about 768.8 GB. Your missing 162.5 GB is exactly what is left over.
+You can easily find and format this hidden space using cfdisk, which provides a simple visual interface in your terminal.
+## Step-by-Step Guide Using cfdisk
+
+   1. Open the disk layout tool:
+   
+   sudo cfdisk /dev/sda
+   
+   2. Select the Free Space:
+   * Use your arrow keys to highlight the line labeled "Free Space" at the bottom of the list.
+   3. Create the partition:
+   * Use the left/right arrow keys to select [ New ] at the bottom of the screen and press Enter.
+      * Press Enter again to accept the full size (it should automatically default to your remaining ~162GB).
+      * If prompted, select primary.
+   4. Save your changes:
+   * Select [ Write ] and press Enter.
+      * Type yes and press Enter to confirm.
+   5. Exit the program:
+   * Select [ Quit ] and press Enter.
+   
+## Step 2: Format the New Partition
+Now that the partition exists, lsblk will show it as sda6. Run this final command to format it to ext4:
+
+sudo mkfs.ext4 /dev/sda6
+
+To make sure everything aligns with your plans, are you installing FydeOS as a multi-boot system alongside Arch and Windows (which looks like sda3), or do you need help configuring the Grub bootloader next?
+
+Yes, you can absolutely add a label to the partition. Adding a label makes it much easier to identify in your file manager and terminal so you do not accidentally overwrite your other data.
+You can do this either during the cfdisk process or right when you format it. Since you are about to format it, the easiest way is to add the label directly to the mkfs.ext4 command using the -L flag.
+## How to format with a label
+Run this command instead of the previous one (assuming your new partition is sda6):
+
+sudo mkfs.ext4 -L "FydeOS" /dev/sda6
+
+## How to verify the label worked
+After running the command, you can check that the label was applied successfully by running:
+
+lsblk -o NAME,FSTYPE,LABEL,SIZE,MOUNTPOINTS
+
+This will output a clean list showing your partition names alongside their text labels, ensuring you always know exactly which partition belongs to FydeOS.
+Once you have formatted it, do you need help mounting the partition to begin downloading FydeOS, or are you ready to move on to the installation script/installer?
+

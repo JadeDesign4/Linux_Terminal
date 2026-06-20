@@ -1,0 +1,16 @@
+Step 1: Download the Theme.
+You can download themes from gnomelook.org or clone the repo from github
+
+Step 2: Move the Theme to SDDM:
+Create the sddm directory if it doesn't exist, and move your downloaded theme folder into it. If its zipped extract then move
+
+Step 3: Configure SDDM:
+Generate the main SDDM configuration file if you haven't already:
+Run:	sudo sddm --example-config | sudo tee /etc/sddm.conf
+
+Step 4: Open /etc/sddm.conf with your preferred text editor (e.g., sudo nano /etc/sddm.ocnf or sudo vim /etc/sddm.conf).
+
+Step 5: Locate the [Theme] section in "/etc/sddm.conf" and change the value of the current value to the exact name of the folder you moved to "/usr/share/sddm/themes/"
+
+Step 6: Restart SDDM:
+Run: sudo systemctl restart sddm

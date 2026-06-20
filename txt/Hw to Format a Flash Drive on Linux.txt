@@ -1,0 +1,49 @@
+You can easily restore it using your Arch terminal, but you must completely wipe its partition table first. Because FydeOS splits installation media into 12 or more tiny system partitions, standard formatting tools will only format one small slice of the drive, leaving the rest of your storage hidden and unusable. [1, 2] 
+Follow this step-by-step guide from your Arch Linux terminal to reclaim its full size and format it back to standard fat32. [2] 
+## Step 1: Identify Your USB Flash Drive
+Plug your USB drive in and list your storage devices:
+
+lsblk
+
+Look for your flash drive size (e.g., 16GB, 32GB, 64GB) and identify its name. It will likely be /dev/sdb or /dev/sdc (since your internal drive is sda). [3] 
+⚠️ Critical Warning: Make completely sure you have the right drive letter (sdX). Using the wrong letter will wipe your entire computer.
+## Step 2: Wipe the Multi-Partition Table
+Instead of deleting partitions one by one, use parted to quickly overwrite the layout with a clean, single master boot record (msdos): [2] 
+
+sudo parted /dev/sdX mklabel msdos
+
+(Replace sdX with your exact USB letter, like sdb)
+## Step 3: Create a Single New Partition [1] 
+Now, allocate 100% of the newly cleared space to a single, unified partition: [2, 4] 
+
+sudo parted /dev/sdX mkpart primary fat32 1MiB 100%
+
+## Step 4: Format to FAT32 with a Label [3] 
+Run lsblk again. Your flash drive will now show a single sub-partition named sdX1 (like sdb1). Format this partition using the dosfstools utility: [2, 4] 
+
+sudo mkfs.vfat -F 32 -n "FLASH_DRIVE" /dev/sdX1
+
+(Replace sdX1 with your partition name, like sdb1)
+## Step 5: Verify the Fix
+Confirm your flash drive is back to normal with its full capacity restored: [4] 
+
+lsblk -o NAME,FSTYPE,LABEL,SIZE
+
+Your drive is now completely reset and ready to store normal files again.
+
+
+That command completed successfully! Your old multi-partition layout has been completely wiped out.
+Now, execute the final two steps to create the clean storage area and format it.
+## Step 1: Create the Primary Partition
+Run this command to create a single partition utilizing 100% of your USB drive's space:
+
+sudo parted /dev/sdb mkpart primary fat32 1MiB 100%
+
+## Step 2: Format to FAT32
+Run this command to format the new partition (sdb1) and give it a clean label:
+
+sudo mkfs.vfat -F 32 -n "FLASH_DRIVE" /dev/sdb1
+
+Once that finishes, your flash drive will be completely back to normal.
+Did the format finish without any errors, or are you ready to jump into editing your refind.conf file to link your brand new FydeOS installation?
+
